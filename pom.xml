@@ -6,7 +6,8 @@
 
   <groupId>wang.smile</groupId>
   <artifactId>wang-smile-common</artifactId>
-  <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
 
   <name>wang-smile-common</name>
   <!-- FIXME change it to the project's website -->
@@ -20,6 +21,7 @@
 
   <modules>
     <module>smile-common</module>
+      <module>code-generator</module>
   </modules>
 
 </project>
