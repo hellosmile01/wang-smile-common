@@ -41,7 +41,6 @@ public class MybatisGeneratorUtil {
      * @param lastInsertIdTables    表名
      * @throws Exception
      */
-    @Deprecated
     public static void generator(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
                                  String module, String database, String tablePrefix, String packageName,
                                  String generatorConfigVm, String serviceVm, String serviceMockVm,
@@ -52,15 +51,16 @@ public class MybatisGeneratorUtil {
         String os = System.getProperty("os.name");
         String targetProject = module;
         String basePath = MybatisGeneratorUtil.class.getResource("/").getPath()
-                            .replace("/target/classes/", "").replace(targetProject, "");
+                            .replace("/target/test-classes/", "")
+                            .replace(targetProject, "");
         /**
          * Windows系统
          */
         if (os.toLowerCase().startsWith(WINDOWS)) {
-            generatorConfigVm = MybatisGeneratorUtil.class.getResource(generatorConfigVm).getPath().replaceFirst("/", "");
-            serviceVm = MybatisGeneratorUtil.class.getResource(serviceVm).getPath().replaceFirst("/", "");
-            serviceMockVm = MybatisGeneratorUtil.class.getResource(serviceMockVm).getPath().replaceFirst("/", "");
-            serviceImplVm = MybatisGeneratorUtil.class.getResource(serviceImplVm).getPath().replaceFirst("/", "");
+            generatorConfigVm = MybatisGeneratorUtil.class.getResource(generatorConfigVm).getPath().replaceFirst("target/test-classes", "src/test/resources");
+            serviceVm = MybatisGeneratorUtil.class.getResource(serviceVm).getPath().replaceFirst("target/test-classes", "src/test/resources");
+            serviceMockVm = MybatisGeneratorUtil.class.getResource(serviceMockVm).getPath().replaceFirst("target/test-classes", "src/test/resources");
+            serviceImplVm = MybatisGeneratorUtil.class.getResource(serviceImplVm).getPath().replaceFirst("target/test-classes", "src/test/resources");
             basePath = basePath.replaceFirst("/", "");
         } else {
             generatorConfigVm = MybatisGeneratorUtil.class.getResource(generatorConfigVm).getPath();
@@ -70,7 +70,7 @@ public class MybatisGeneratorUtil {
         }
 
         String generatorConfigXml = MybatisGeneratorUtil.class.getResource("/").getPath()
-                .replace("/target/classes/", "") + "/src/main/resources/generatorConfig.xml";
+                .replace("target/test-classes", "src/test/resources") + "generatorConfig.xml";
 
         targetProject = basePath + targetProject;
 
