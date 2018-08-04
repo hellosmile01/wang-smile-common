@@ -28,7 +28,11 @@ public abstract class BaseController {
 	public String exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception exception) {
 		LOGGER.error("统一异常处理：", exception);
 		request.setAttribute("ex", exception);
-		if (null != request.getHeader("X-Requested-With") && "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"))) {
+
+		String xRequestedWith = "X-Requested-With";
+		String xmlHttpRequest = "XMLHttpRequest";
+
+		if (null != request.getHeader(xRequestedWith) && xmlHttpRequest.equalsIgnoreCase(request.getHeader(xRequestedWith))) {
 			request.setAttribute("requestHeader", "ajax");
 		}
 		// shiro没有权限异常

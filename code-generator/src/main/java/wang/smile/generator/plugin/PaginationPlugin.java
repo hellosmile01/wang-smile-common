@@ -1,4 +1,4 @@
-package wang.smile.common.plugin;
+package wang.smile.generator.plugin;
 
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;

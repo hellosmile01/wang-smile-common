@@ -10,6 +10,8 @@ import java.util.ResourceBundle;
  * @Date 2018/5/25.
  */
 public class PropertiesFileUtil {
+
+    private static final String BOOLEAN_TRUE_STR = "true";
     /**
      * 当打开多个资源文件时，缓存资源文件
      */
@@ -96,7 +98,7 @@ public class PropertiesFileUtil {
     public boolean getBool(String key) {
         try {
             String value = resourceBundle.getString(key);
-            if ("true".equals(value)) {
+            if (BOOLEAN_TRUE_STR.equals(value)) {
                 return true;
             }
             return false;

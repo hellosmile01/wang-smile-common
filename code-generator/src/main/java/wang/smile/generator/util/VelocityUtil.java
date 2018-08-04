@@ -1,4 +1,4 @@
-package wang.smile.common.util;
+package wang.smile.generator.util;
 
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.commons.lang.StringUtils;

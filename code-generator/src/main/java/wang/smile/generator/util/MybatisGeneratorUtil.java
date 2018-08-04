@@ -8,7 +8,6 @@ import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.internal.DefaultShellCallback;
 import wang.smile.common.util.AESUtil;
 import wang.smile.common.util.StringUtil;
-import wang.smile.common.util.VelocityUtil;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -23,47 +22,30 @@ import static wang.smile.common.util.StringUtil.lineToHump;
  */
 public class MybatisGeneratorUtil {
 
-    /**
-     * generatorConfig模板路径
-     */
-//    private static String generatorConfig_vm = "/template/generatorConfig.vm";
-    /**
-     * Service模板路径
-     */
-//    private static String service_vm = "/template/Service.vm";
-    /**
-     * ServiceMock模板路径
-     */
-//    private static String serviceMock_vm = "/template/ServiceMock.vm";
-    /**
-     * ServiceImpl模板路径
-     */
-//    private static String serviceImpl_vm = "/template/ServiceImpl.vm";
+    private static final String WINDOWS = "win";
+
     /**
      * 根据模板生成generatorConfig.xml文件
-     * @param jdbcDriver   驱动路径
-     * @param jdbcUrl      链接
-     * @param jdbcUsername 帐号
-     * @param jdbcPassword 密码
-     * @param module        项目模块
-     * @param database      数据库
-     * @param tablePrefix  表前缀
-     * @param packageName  包名
+     * @param jdbcDriver            驱动路径
+     * @param jdbcUrl               链接
+     * @param jdbcUsername          帐号
+     * @param jdbcPassword          密码
+     * @param module                项目模块
+     * @param database              数据库
+     * @param tablePrefix           表前缀
+     * @param packageName           包名
+     * @param generatorConfigVm     generatorConfig模板路径
+     * @param serviceVm             Service模板路径
+     * @param serviceMockVm         ServiceMock模板路径
+     * @param serviceImplVm         ServiceImpl模板路径
+     * @param lastInsertIdTables    表名
+     * @throws Exception
      */
-    public static void generator(
-            String jdbcDriver,
-            String jdbcUrl,
-            String jdbcUsername,
-            String jdbcPassword,
-            String module,
-            String database,
-            String tablePrefix,
-            String packageName,
-            String generatorConfig_vm,
-            String service_vm,
-            String serviceMock_vm,
-            String serviceImpl_vm,
-            Map<String, String> lastInsertIdTables) throws Exception{
+    @Deprecated
+    public static void generator(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
+                                 String module, String database, String tablePrefix, String packageName,
+                                 String generatorConfigVm, String serviceVm, String serviceMockVm,
+                                 String serviceImplVm, Map<String, String> lastInsertIdTables) throws Exception{
         /**
          * 获取系统名称windows7
          */
@@ -74,17 +56,17 @@ public class MybatisGeneratorUtil {
         /**
          * Windows系统
          */
-        if (os.toLowerCase().startsWith("win")) {
-            generatorConfig_vm = MybatisGeneratorUtil.class.getResource(generatorConfig_vm).getPath().replaceFirst("/", "");
-            service_vm = MybatisGeneratorUtil.class.getResource(service_vm).getPath().replaceFirst("/", "");
-            serviceMock_vm = MybatisGeneratorUtil.class.getResource(serviceMock_vm).getPath().replaceFirst("/", "");
-            serviceImpl_vm = MybatisGeneratorUtil.class.getResource(serviceImpl_vm).getPath().replaceFirst("/", "");
+        if (os.toLowerCase().startsWith(WINDOWS)) {
+            generatorConfigVm = MybatisGeneratorUtil.class.getResource(generatorConfigVm).getPath().replaceFirst("/", "");
+            serviceVm = MybatisGeneratorUtil.class.getResource(serviceVm).getPath().replaceFirst("/", "");
+            serviceMockVm = MybatisGeneratorUtil.class.getResource(serviceMockVm).getPath().replaceFirst("/", "");
+            serviceImplVm = MybatisGeneratorUtil.class.getResource(serviceImplVm).getPath().replaceFirst("/", "");
             basePath = basePath.replaceFirst("/", "");
         } else {
-            generatorConfig_vm = MybatisGeneratorUtil.class.getResource(generatorConfig_vm).getPath();
-            service_vm = MybatisGeneratorUtil.class.getResource(service_vm).getPath();
-            serviceMock_vm = MybatisGeneratorUtil.class.getResource(serviceMock_vm).getPath();
-            serviceImpl_vm = MybatisGeneratorUtil.class.getResource(serviceImpl_vm).getPath();
+            generatorConfigVm = MybatisGeneratorUtil.class.getResource(generatorConfigVm).getPath();
+            serviceVm = MybatisGeneratorUtil.class.getResource(serviceVm).getPath();
+            serviceMockVm = MybatisGeneratorUtil.class.getResource(serviceMockVm).getPath();
+            serviceImplVm = MybatisGeneratorUtil.class.getResource(serviceImplVm).getPath();
         }
 
         String generatorConfigXml = MybatisGeneratorUtil.class.getResource("/").getPath()
@@ -122,7 +104,7 @@ public class MybatisGeneratorUtil {
             context.put("targetProject_sqlMap", targetProject + "/src/main/resources");
             context.put("generator_jdbc_password", AESUtil.aesDecode(jdbcPassword));
             context.put("last_insert_id_tables", lastInsertIdTables);
-            VelocityUtil.generate(generatorConfig_vm, generatorConfigXml, context);
+            VelocityUtil.generate(generatorConfigVm, generatorConfigXml, context);
             // 删除旧代码
             deleteDir(new File(targetProject + "/src/main/java/" + packageName
                     .replaceAll("\\.", "/") + "/dao/model"));
@@ -166,10 +148,10 @@ public class MybatisGeneratorUtil {
             String serviceImpl = serviceImplPath + "/" + model + "ServiceImpl.java";
             // 生成service
             File serviceFile = new File(service);
-            serviceAndServiceMock(packageName, service_vm, ctime, model, service, serviceFile);
+            serviceAndServiceMock(packageName, serviceVm, ctime, model, service, serviceFile);
             // 生成serviceMock
             File serviceMockFile = new File(serviceMock);
-            serviceAndServiceMock(packageName, serviceMock_vm, ctime, model, serviceMock, serviceMockFile);
+            serviceAndServiceMock(packageName, serviceMockVm, ctime, model, serviceMock, serviceMockFile);
             // 生成serviceImpl
             File serviceImplFile = new File(serviceImpl);
             if (!serviceImplFile.exists()) {
@@ -178,20 +160,20 @@ public class MybatisGeneratorUtil {
                 context.put("model", model);
                 context.put("mapper", StringUtil.toLowerCaseFirstOne(model));
                 context.put("ctime", ctime);
-                VelocityUtil.generate(serviceImpl_vm, serviceImpl, context);
+                VelocityUtil.generate(serviceImplVm, serviceImpl, context);
                 System.out.println(serviceImpl);
             }
         }
         System.out.println("========== 结束生成Service ==========");
     }
 
-    private static void serviceAndServiceMock(String packageName, String service_vm, String ctime, String model, String service, File serviceFile) throws Exception {
+    private static void serviceAndServiceMock(String packageName, String serviceVm, String ctime, String model, String service, File serviceFile) throws Exception {
         if (!serviceFile.exists()) {
             VelocityContext context = new VelocityContext();
             context.put("package_name", packageName);
             context.put("model", model);
             context.put("ctime", ctime);
-            VelocityUtil.generate(service_vm, service, context);
+            VelocityUtil.generate(serviceVm, service, context);
             System.out.println(service);
         }
     }

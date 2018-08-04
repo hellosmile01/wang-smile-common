@@ -119,8 +119,7 @@ public class AESUtil {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (IllegalBlockSizeException e) {
-            throw new RuntimeException("兄弟，配置文件中的密码需要使用AES加密，请使用wangsy.smile.meteor.common.util.AESUtil工具类修改这些值！");
-            //e.printStackTrace();
+            throw new RuntimeException("兄弟，配置文件中的密码需要使用AES加密，请使用AESUtil工具类修改这些值！");
         } catch (BadPaddingException e) {
             e.printStackTrace();
         }

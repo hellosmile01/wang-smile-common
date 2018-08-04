@@ -7,18 +7,22 @@ package wang.smile.common.db;
  */
 public enum DataSourceEnum {
 
-	// 主库
+    /**
+     * 主库
+     */
 	MASTER("masterDataSource", true),
-	// 从库
+    /**
+     * 从库
+     */
 	SLAVE("slaveDataSource", false),;
 
-	/**
-	 * 数据源名称
-	 */
+    /**
+     * 数据源名称
+     */
 	private String name;
-	/**
-	 * 是否是默认数据源
-	 */
+    /**
+     * 是否是默认数据源
+     */
 	private boolean master;
 
 	DataSourceEnum(String name, boolean master) {
