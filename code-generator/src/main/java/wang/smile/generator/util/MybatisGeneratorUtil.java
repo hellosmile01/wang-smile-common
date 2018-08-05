@@ -138,8 +138,18 @@ public class MybatisGeneratorUtil {
         String servicePath = basePath + module+ "/src/main/java/" + packageName
                 .replaceAll("\\.", "/") + "/service";
 
+        File serviceDir = new File(servicePath);
+        if(!serviceDir.exists()) {
+            serviceDir.mkdir();
+        }
+
         String serviceImplPath = basePath + module+ "/src/main/java/" + packageName
                 .replaceAll("\\.", "/") + "/service/impl";
+
+        File serviceImplDir = new File(serviceImplPath);
+        if(!serviceImplDir.exists()) {
+            serviceImplDir.mkdir();
+        }
 
         for (int i = 0; i < tables.size(); i++) {
             String model = StringUtil.lineToHump(ObjectUtils.toString(tables.get(i).get("table_name")));
