@@ -12,9 +12,7 @@ import java.util.Map;
  * @Date 2018/5/25.
  */
 public class Generator {
-    /**
-     * 根据命名规范，只修改此常量值即可
-     */
+
     /**
      * 模块名称
      */
@@ -31,14 +29,12 @@ public class Generator {
      * 项目的包名
      */
     private static String PACKAGE_NAME = "com.coder.sample";
+
     private static String JDBC_DRIVER = PropertiesFileUtil.getInstance("generator").get("generator.jdbc.driver");
     private static String JDBC_URL = PropertiesFileUtil.getInstance("generator").get("generator.jdbc.url");
     private static String JDBC_USERNAME = PropertiesFileUtil.getInstance("generator").get("generator.jdbc.username");
     private static String JDBC_PASSWORD = PropertiesFileUtil.getInstance("generator").get("generator.jdbc.password");
-    /**
-     * generatorConfig模板路径
-     */
-    private static String generatorConfig_vm = "/template/generatorConfig.vm";
+
     /**
      * Service模板路径
      */
@@ -51,6 +47,10 @@ public class Generator {
      * ServiceImpl模板路径
      */
     private static String serviceImpl_vm = "/template/ServiceImpl.vm";
+    /**
+     * generatorConfig模板路径
+     */
+    private static String generatorConfig_vm = "/template/generatorConfig.vm";
     /**
      * 自动代码生成
      * @param args
