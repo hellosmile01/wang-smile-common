@@ -39,12 +39,13 @@ public class MybatisGeneratorUtil {
      * @param serviceMockVm         ServiceMock模板路径
      * @param serviceImplVm         ServiceImpl模板路径
      * @param lastInsertIdTables    表名
+     * @param genService            是否生成service
      * @throws Exception
      */
     public static void generator(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
                                  String module, String database, String tablePrefix, String packageName,
                                  String generatorConfigVm, String serviceVm, String serviceMockVm,
-                                 String serviceImplVm, Map<String, String> lastInsertIdTables) throws Exception{
+                                 String serviceImplVm, Map<String, String> lastInsertIdTables, boolean genService) throws Exception{
         /**
          * 获取系统名称windows7
          */
@@ -133,48 +134,50 @@ public class MybatisGeneratorUtil {
         }
         System.out.println("========== 结束运行MybatisGenerator ==========");
 
-        System.out.println("========== 开始生成Service ==========");
-        String ctime = new SimpleDateFormat("yyyy/M/d").format(new Date());
-        String servicePath = basePath + module+ "/src/main/java/" + packageName
-                .replaceAll("\\.", "/") + "/service";
+        if(genService) {
+            System.out.println("========== 开始生成Service ==========");
+            String ctime = new SimpleDateFormat("yyyy/M/d").format(new Date());
+            String servicePath = basePath + module+ "/src/main/java/" + packageName
+                    .replaceAll("\\.", "/") + "/service";
 
-        File serviceDir = new File(servicePath);
-        if(!serviceDir.exists()) {
-            serviceDir.mkdir();
-        }
-
-        String serviceImplPath = basePath + module+ "/src/main/java/" + packageName
-                .replaceAll("\\.", "/") + "/service/impl";
-
-        File serviceImplDir = new File(serviceImplPath);
-        if(!serviceImplDir.exists()) {
-            serviceImplDir.mkdir();
-        }
-
-        for (int i = 0; i < tables.size(); i++) {
-            String model = StringUtil.lineToHump(ObjectUtils.toString(tables.get(i).get("table_name")));
-            String service = servicePath + "/" + model + "Service.java";
-            String serviceMock = servicePath + "/" + model + "ServiceMock.java";
-            String serviceImpl = serviceImplPath + "/" + model + "ServiceImpl.java";
-            // 生成service
-            File serviceFile = new File(service);
-            serviceAndServiceMock(packageName, serviceVm, ctime, model, service, serviceFile);
-            // 生成serviceMock
-            File serviceMockFile = new File(serviceMock);
-            serviceAndServiceMock(packageName, serviceMockVm, ctime, model, serviceMock, serviceMockFile);
-            // 生成serviceImpl
-            File serviceImplFile = new File(serviceImpl);
-            if (!serviceImplFile.exists()) {
-                VelocityContext context = new VelocityContext();
-                context.put("package_name", packageName);
-                context.put("model", model);
-                context.put("mapper", StringUtil.toLowerCaseFirstOne(model));
-                context.put("ctime", ctime);
-                VelocityUtil.generate(serviceImplVm, serviceImpl, context);
-                System.out.println(serviceImpl);
+            File serviceDir = new File(servicePath);
+            if(!serviceDir.exists()) {
+                serviceDir.mkdir();
             }
+
+            String serviceImplPath = basePath + module+ "/src/main/java/" + packageName
+                    .replaceAll("\\.", "/") + "/service/impl";
+
+            File serviceImplDir = new File(serviceImplPath);
+            if(!serviceImplDir.exists()) {
+                serviceImplDir.mkdir();
+            }
+
+            for (int i = 0; i < tables.size(); i++) {
+                String model = StringUtil.lineToHump(ObjectUtils.toString(tables.get(i).get("table_name")));
+                String service = servicePath + "/" + model + "Service.java";
+                String serviceMock = servicePath + "/" + model + "ServiceMock.java";
+                String serviceImpl = serviceImplPath + "/" + model + "ServiceImpl.java";
+                // 生成service
+                File serviceFile = new File(service);
+                serviceAndServiceMock(packageName, serviceVm, ctime, model, service, serviceFile);
+                // 生成serviceMock
+                File serviceMockFile = new File(serviceMock);
+                serviceAndServiceMock(packageName, serviceMockVm, ctime, model, serviceMock, serviceMockFile);
+                // 生成serviceImpl
+                File serviceImplFile = new File(serviceImpl);
+                if (!serviceImplFile.exists()) {
+                    VelocityContext context = new VelocityContext();
+                    context.put("package_name", packageName);
+                    context.put("model", model);
+                    context.put("mapper", StringUtil.toLowerCaseFirstOne(model));
+                    context.put("ctime", ctime);
+                    VelocityUtil.generate(serviceImplVm, serviceImpl, context);
+                    System.out.println(serviceImpl);
+                }
+            }
+            System.out.println("========== 结束生成Service ==========");
         }
-        System.out.println("========== 结束生成Service ==========");
     }
 
     private static void serviceAndServiceMock(String packageName, String serviceVm, String ctime, String model, String service, File serviceFile) throws Exception {
