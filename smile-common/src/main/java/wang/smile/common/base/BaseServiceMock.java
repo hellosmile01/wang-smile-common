@@ -22,7 +22,7 @@ public abstract class BaseServiceMock<Mapper, Record, Example> implements BaseSe
 	}
 
 	@Override
-	public int deleteByPrimaryKey(Integer id) {
+	public int deleteByPrimaryKey(Long id) {
 		return -1;
 	}
 
@@ -77,7 +77,7 @@ public abstract class BaseServiceMock<Mapper, Record, Example> implements BaseSe
 	}
 
 	@Override
-	public Record selectByPrimaryKey(Integer id) {
+	public Record selectByPrimaryKey(Long id) {
 		return null;
 	}
 
@@ -116,7 +116,7 @@ public abstract class BaseServiceMock<Mapper, Record, Example> implements BaseSe
 		return -1;
 	}
 
-/*	@Override
-	public void initMapper() {}*/
+	@Override
+	public void initMapper() {}
 
 }

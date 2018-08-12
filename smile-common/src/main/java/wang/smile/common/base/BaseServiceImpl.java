@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.util.StringUtils;
 import wang.smile.common.db.DataSourceEnum;
 import wang.smile.common.db.DynamicDataSource;
+import wang.smile.common.util.SpringContextUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -57,7 +58,7 @@ public abstract class BaseServiceImpl<Mapper, Record, Example> implements BaseSe
 	}
 
 	@Override
-	public int deleteByPrimaryKey(Integer id) {
+	public int deleteByPrimaryKey(Long id) {
 		try {
 			DynamicDataSource.setDataSource(DataSourceEnum.MASTER.getName());
 			Method deleteByPrimaryKey = mapper.getClass().getDeclaredMethod("deleteByPrimaryKey", id.getClass());
@@ -263,7 +264,7 @@ public abstract class BaseServiceImpl<Mapper, Record, Example> implements BaseSe
 	}
 
 	@Override
-	public Record selectByPrimaryKey(Integer id) {
+	public Record selectByPrimaryKey(Long id) {
 		try {
 			DynamicDataSource.setDataSource(DataSourceEnum.SLAVE.getName());
 			Method selectByPrimaryKey = mapper.getClass().getDeclaredMethod("selectByPrimaryKey", id.getClass());
@@ -418,12 +419,10 @@ public abstract class BaseServiceImpl<Mapper, Record, Example> implements BaseSe
 		return 0;
 	}
 
-	/**
-	 * 	@Override
-		public void initMapper() {
-			this.mapper = SpringContextUtil.getBean(getMapperClass());
-		}
-	 */
+	@Override
+	public void initMapper() {
+		this.mapper = SpringContextUtil.getBean(getMapperClass());
+	}
 
 	/**
 	 * 获取类泛型class

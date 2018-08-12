@@ -30,7 +30,7 @@ public interface BaseService<Record, Example> {
      * @param id
      * @return
      */
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Long id);
 
     /**
      * 插入记录
@@ -115,7 +115,7 @@ public interface BaseService<Record, Example> {
      * @param id
      * @return
      */
-    Record selectByPrimaryKey(Integer id);
+    Record selectByPrimaryKey(Long id);
 
     /**
      * 根据条件更新有效字段
@@ -172,6 +172,6 @@ public interface BaseService<Record, Example> {
     /**
      * 初始化mapper
      */
-//    void initMapper();
+    void initMapper();
 
 }

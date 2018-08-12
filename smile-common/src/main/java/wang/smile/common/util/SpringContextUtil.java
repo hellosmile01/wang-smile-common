@@ -25,6 +25,10 @@ public class SpringContextUtil implements ApplicationContextAware {
 		context = applicationContext;
 	}
 
+	public static ApplicationContext getApplicationContext() {
+		return context;
+	}
+
 	/**
 	 * 根据名称获取bean
 	 * @param beanName
