@@ -68,7 +68,7 @@ public class MybatisGeneratorUtil {
 
         SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
         sqlMapGeneratorConfiguration.setTargetProject(projectPath + "/"+moduleName + RESOURCES_PATH);
-        sqlMapGeneratorConfiguration.setTargetPackage("mapping");
+        sqlMapGeneratorConfiguration.setTargetPackage("mapper");
         context.setSqlMapGeneratorConfiguration(sqlMapGeneratorConfiguration);
 
         JavaClientGeneratorConfiguration javaClientGeneratorConfiguration = new JavaClientGeneratorConfiguration();

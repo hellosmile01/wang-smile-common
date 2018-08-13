@@ -31,7 +31,7 @@ public class Generator {
     /**
      * 模板路径
      */
-    private static String TEMPLATE_FILE_PATH = PROJECT_PATH + "/" + MODULE + "/src/test/resources/template";//模板位置
+    private static String TEMPLATE_FILE_PATH = PROJECT_PATH + "/" + MODULE + "/src/test/resources/template";
 
     /**
      * 自动代码生成
