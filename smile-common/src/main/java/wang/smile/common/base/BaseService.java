@@ -1,177 +1,136 @@
 package wang.smile.common.base;
 
-import org.apache.ibatis.annotations.Param;
+import com.github.pagehelper.PageHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import tk.mybatis.mapper.entity.Condition;
 
 import java.util.List;
 
 /**
- * BaseService接口
  * @author wangsy
- * @date 2018-5-26
+ * @Date 2018/8/13.
  */
-public interface BaseService<Record, Example> {
+public abstract class BaseService<T> implements Service<T> {
+    @Autowired
+    protected Mapper<T> mapper;
 
-    /**
-     * 根据条件查询记录数量
-     * @param example
-     * @return
-     */
-    int countByExample(Example example);
+    @Override
+    public long count(T model){
+        return mapper.selectCount(model);
+    }
 
-    /**
-     * 根据条件删除记录
-     * @param example
-     * @return
-     */
-    int deleteByExample(Example example);
+    @Override
+    public long countByCondition(Condition condition){
+        return mapper.selectCountByCondition(condition);
+    }
 
-    /**
-     * 根据主键删除记录
-     * @param id
-     * @return
-     */
-    int deleteByPrimaryKey(Long id);
+    @Override
+    public void insert(T model) {
+        mapper.insert(model);
+    }
 
-    /**
-     * 插入记录
-     * @param record
-     * @return
-     */
-    int insert(Record record);
+    @Override
+    public void insertSelective(T model) {
+        mapper.insertSelective(model);
+    }
 
-    /**
-     * 插入记录有效字段
-     * @param record
-     * @return
-     */
-    int insertSelective(Record record);
+    @Override
+    public void insertList(List<T> models) {
+        mapper.insertList(models);
+    }
 
-    /**
-     * 根据条件查询记录，附带BLOB字段
-     * @param example
-     * @return
-     */
-    List<Record> selectByExampleWithBLOBs(Example example);
+    @Override
+    public void deleteByPrimaryKey(Object id) {
+        mapper.deleteByPrimaryKey(id);
+    }
 
-    /**
-     * 根据条件查询记录
-     * @param example
-     * @return
-     */
-    List<Record> selectByExample(Example example);
+    @Override
+    public void deleteByIds(String ids) {
+        mapper.deleteByIds(ids);
+    }
 
-    /**
-     * 根据条件查询记录并按页码分页，附带BLOB字段
-     * @param example 条件
-     * @param pageNum 页数
-     * @param pageSize 每页记录数
-     * @return
-     */
-    List<Record> selectByExampleWithBLOBsForStartPage(Example example, Integer pageNum, Integer pageSize);
+    @Override
+    public void deleteByCondition(Condition condition){
+        mapper.deleteByCondition(condition);
+    }
 
-    /**
-     * 根据条件查询记录并按页码分页
-     * @param example 条件
-     * @param pageNum 页数
-     * @param pageSize 每页记录数
-     * @return
-     */
-    List<Record> selectByExampleForStartPage(Example example, Integer pageNum, Integer pageSize);
+    @Override
+    public void updateByCondition(T model, Condition condition){
+        mapper.updateByCondition(model,condition);
+    }
 
-    /**
-     * 根据条件查询记录并按最后记录数分页，附带BLOB字段
-     * @param example 条件
-     * @param offset 跳过数量
-     * @param limit 查询数量
-     * @return
-     */
-    List<Record> selectByExampleWithBLOBsForOffsetPage(Example example, Integer offset, Integer limit);
+    @Override
+    public void updateByConditionSelective(T model, Condition condition){
+        mapper.updateByConditionSelective(model,condition);
+    }
 
-    /**
-     * 根据条件查询记录并按最后记录数分页
-     * @param example 条件
-     * @param offset 跳过数量
-     * @param limit 查询数量
-     * @return
-     */
-    List<Record> selectByExampleForOffsetPage(Example example, Integer offset, Integer limit);
+    @Override
+    public void updateByPrimaryKey(T model){
+        mapper.updateByPrimaryKey(model);
+    }
 
-    /**
-     * 根据条件查询第一条记录
-     * @param example
-     * @return
-     */
-    Record selectFirstByExample(Example example);
+    @Override
+    public void updateByPrimaryKeySelective(T model) {
+        mapper.updateByPrimaryKeySelective(model);
+    }
 
-    /**
-     * 根据条件查询第一条记录，附带BLOB字段
-     * @param example
-     * @return
-     */
-    Record selectFirstByExampleWithBLOBs(Example example);
+    @Override
+    public T selectByPrimaryKey(Object id) {
+        return mapper.selectByPrimaryKey(id);
+    }
 
-    /**
-     * 根据主键查询记录
-     * @param id
-     * @return
-     */
-    Record selectByPrimaryKey(Long id);
+    @Override
+    public T selectOne(T model){
+        return mapper.selectOne(model);
+    }
 
-    /**
-     * 根据条件更新有效字段
-     * @param record
-     * @param example
-     * @return
-     */
-    int updateByExampleSelective(@Param("record") Record record, @Param("example") Example example);
+    @Override
+    public List<T> selectAll(){
+        return mapper.selectAll();
+    }
 
-    /**
-     * 根据条件更新记录有效字段，附带BLOB字段
-     * @param record
-     * @param example
-     * @return
-     */
-    int updateByExampleWithBLOBs(@Param("record") Record record, @Param("example") Example example);
+    @Override
+    public T selectFirst(T model){
+        List<T> result = mapper.select(model);
+        if (null != result && result.size() > 0) {
+            return result.get(0);
+        }
+        return null;
+    }
 
-    /**
-     * 根据条件更新记录
-     * @param record
-     * @param example
-     * @return
-     */
-    int updateByExample(@Param("record") Record record, @Param("example") Example example);
+    @Override
+    public T selectFirstByCondition(Condition condition) {
+        List<T> result = mapper.selectByCondition(condition);
+        if (null != result && result.size() > 0) {
+            return result.get(0);
+        }
+        return null;
+    }
 
-    /**
-     * 根据主键更新记录有效字段
-     * @param record
-     * @return
-     */
-    int updateByPrimaryKeySelective(Record record);
+    @Override
+    public List<T> select(T model){
+        return mapper.select(model);
+    }
 
-    /**
-     * 根据主键更新记录，附带BLOB字段
-     * @param record
-     * @return
-     */
-    int updateByPrimaryKeyWithBLOBs(Record record);
+    @Override
+    public List<T> selectForStartPage(T model, Integer pageNum, Integer pageSize){
+        PageHelper.offsetPage(pageNum, pageSize, false);
+        return mapper.select(model);
+    }
 
-    /**
-     * 根据主键更新记录
-     * @param record
-     * @return
-     */
-    int updateByPrimaryKey(Record record);
+    @Override
+    public List<T> selectByIds(String ids) {
+        return mapper.selectByIds(ids);
+    }
 
-    /**
-     * 根据主键批量删除记录
-     * @param ids
-     * @return
-     */
-    int deleteByPrimaryKeys(String ids);
+    @Override
+    public List<T> selectByCondition(Condition condition) {
+        return mapper.selectByCondition(condition);
+    }
 
-    /**
-     * 初始化mapper
-     */
-    void initMapper();
-
+    @Override
+    public List<T> selectByConditionForStartPage(Condition condition, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize, false);
+        return mapper.selectByCondition(condition);
+    }
 }

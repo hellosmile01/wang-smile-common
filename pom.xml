@@ -76,6 +76,7 @@
     <modules>
       <module>smile-common</module>
       <module>code-generator</module>
+      <module>coder-sample</module>
     </modules>
 
 </project>

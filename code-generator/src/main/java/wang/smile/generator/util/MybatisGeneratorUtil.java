@@ -1,19 +1,17 @@
 package wang.smile.generator.util;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.velocity.VelocityContext;
+import com.google.common.base.CaseFormat;
+import freemarker.template.TemplateExceptionHandler;
+import org.apache.commons.lang.StringUtils;
 import org.mybatis.generator.api.MyBatisGenerator;
-import org.mybatis.generator.config.Configuration;
-import org.mybatis.generator.config.xml.ConfigurationParser;
+import org.mybatis.generator.config.*;
 import org.mybatis.generator.internal.DefaultShellCallback;
-import wang.smile.common.util.AESUtil;
-import wang.smile.common.util.StringUtil;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static wang.smile.common.util.StringUtil.lineToHump;
 
 /**
  * 代码生成类
@@ -22,184 +20,193 @@ import static wang.smile.common.util.StringUtil.lineToHump;
  */
 public class MybatisGeneratorUtil {
 
-    private static final String WINDOWS = "win";
+    private static Object JAVA_PATH = "\\src\\main\\java";
+    /**
+     * 资源文件路径
+     */
+    private static final String RESOURCES_PATH = "\\src\\main\\resources";
+
+    private static final String DATE = new SimpleDateFormat("yyyy/MM/dd").format(new Date());
+
+    private static final String AUTHOR = "wangsy";
 
     /**
      * 根据模板生成generatorConfig.xml文件
-     * @param jdbcDriver            驱动路径
-     * @param jdbcUrl               链接
-     * @param jdbcUsername          帐号
-     * @param jdbcPassword          密码
-     * @param module                项目模块
-     * @param database              数据库
-     * @param tablePrefix           表前缀
-     * @param packageName           包名
-     * @param generatorConfigVm     generatorConfig模板路径
-     * @param serviceVm             Service模板路径
-     * @param serviceMockVm         ServiceMock模板路径
-     * @param serviceImplVm         ServiceImpl模板路径
-     * @param lastInsertIdTables    表名
-     * @throws Exception
+     * @param jdbcDiverClassName     驱动路径
+     * @param jdbcUrl                  链接
+     * @param jdbcUsername             帐号
+     * @param jdbcPassword             密码
+     * @param basePackage              包名
+     * @param tableName                 表名
      */
-    public static void generator(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
-                                 String module, String database, String tablePrefix, String packageName,
-                                 String generatorConfigVm, String serviceVm, String serviceMockVm,
-                                 String serviceImplVm, Map<String, String> lastInsertIdTables) throws Exception{
-        /**
-         * 获取系统名称windows7
-         */
-        String os = System.getProperty("os.name");
-        String targetProject = module;
-        String basePath = MybatisGeneratorUtil.class.getResource("/").getPath()
-                            .replace("/target/test-classes/", "")
-                            .replace(targetProject, "");
-        /**
-         * Windows系统
-         */
-        if (os.toLowerCase().startsWith(WINDOWS)) {
-            generatorConfigVm = MybatisGeneratorUtil.class.getResource(generatorConfigVm).getPath().replaceFirst("target/test-classes", "src/test/resources");
-            serviceVm = MybatisGeneratorUtil.class.getResource(serviceVm).getPath().replaceFirst("target/test-classes", "src/test/resources");
-            serviceMockVm = MybatisGeneratorUtil.class.getResource(serviceMockVm).getPath().replaceFirst("target/test-classes", "src/test/resources");
-            serviceImplVm = MybatisGeneratorUtil.class.getResource(serviceImplVm).getPath().replaceFirst("target/test-classes", "src/test/resources");
-            basePath = basePath.replaceFirst("/", "");
-        } else {
-            generatorConfigVm = MybatisGeneratorUtil.class.getResource(generatorConfigVm).getPath();
-            serviceVm = MybatisGeneratorUtil.class.getResource(serviceVm).getPath();
-            serviceMockVm = MybatisGeneratorUtil.class.getResource(serviceMockVm).getPath();
-            serviceImplVm = MybatisGeneratorUtil.class.getResource(serviceImplVm).getPath();
+    public static void generator(String jdbcDiverClassName, String jdbcUrl, String jdbcUsername, String jdbcPassword, String projectPath,
+                                 String moduleName, String basePackage, String modelName, String tableName, String templateFilePath) {
+
+        Context context = new Context(ModelType.FLAT);
+        context.setId("Potato");
+        context.setTargetRuntime("MyBatis3Simple");
+        context.addProperty(PropertyRegistry.CONTEXT_BEGINNING_DELIMITER, "`");
+        context.addProperty(PropertyRegistry.CONTEXT_ENDING_DELIMITER, "`");
+
+        JDBCConnectionConfiguration jdbcConnectionConfiguration = new JDBCConnectionConfiguration();
+        jdbcConnectionConfiguration.setConnectionURL(jdbcUrl);
+        jdbcConnectionConfiguration.setUserId(jdbcUsername);
+        jdbcConnectionConfiguration.setPassword(jdbcPassword);
+        jdbcConnectionConfiguration.setDriverClass(jdbcDiverClassName);
+        context.setJdbcConnectionConfiguration(jdbcConnectionConfiguration);
+
+        PluginConfiguration pluginConfiguration = new PluginConfiguration();
+        pluginConfiguration.setConfigurationType("tk.mybatis.mapper.generator.MapperPlugin");
+        String mapperInterfaceReference = "wang.smile.common.base.Mapper";
+        pluginConfiguration.addProperty("mappers", mapperInterfaceReference);
+        context.addPluginConfiguration(pluginConfiguration);
+
+        JavaModelGeneratorConfiguration javaModelGeneratorConfiguration = new JavaModelGeneratorConfiguration();
+        javaModelGeneratorConfiguration.setTargetProject(projectPath + "/" + moduleName + JAVA_PATH);
+        javaModelGeneratorConfiguration.setTargetPackage(basePackage + ".model");
+        context.setJavaModelGeneratorConfiguration(javaModelGeneratorConfiguration);
+
+        SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
+        sqlMapGeneratorConfiguration.setTargetProject(projectPath + "/"+moduleName + RESOURCES_PATH);
+        sqlMapGeneratorConfiguration.setTargetPackage("mapping");
+        context.setSqlMapGeneratorConfiguration(sqlMapGeneratorConfiguration);
+
+        JavaClientGeneratorConfiguration javaClientGeneratorConfiguration = new JavaClientGeneratorConfiguration();
+        javaClientGeneratorConfiguration.setTargetProject(projectPath + "/" + moduleName + JAVA_PATH);
+        javaClientGeneratorConfiguration.setTargetPackage(basePackage + ".mapper");
+        javaClientGeneratorConfiguration.setConfigurationType("XMLMAPPER");
+        context.setJavaClientGeneratorConfiguration(javaClientGeneratorConfiguration);
+
+        TableConfiguration tableConfiguration = new TableConfiguration(context);
+        tableConfiguration.setTableName(tableName);
+        if (StringUtils.isNotEmpty(modelName)) {
+            tableConfiguration.setDomainObjectName(modelName);
         }
+        tableConfiguration.setGeneratedKey(new GeneratedKey("id", "Mysql", true, null));
+        context.addTableConfiguration(tableConfiguration);
 
-        String generatorConfigXml = MybatisGeneratorUtil.class.getResource("/").getPath()
-                .replace("target/test-classes", "src/test/resources") + "generatorConfig.xml";
-
-        targetProject = basePath + targetProject;
-
-        String sql = "SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = '" + database
-                + "' AND table_name LIKE '" + tablePrefix + "_%';";
-
-        System.out.println("========== 开始生成generatorConfig.xml文件 ==========");
-        List<Map<String, Object>> tables = new ArrayList<>();
+        List<String> warnings;
+        MyBatisGenerator generator;
         try {
-            VelocityContext context = new VelocityContext();
-            Map<String, Object> table;
+            Configuration config = new Configuration();
+            config.addContext(context);
+            config.validate();
 
-            // 查询定制前缀项目的所有表
-            JdbcUtil jdbcUtil = new JdbcUtil(jdbcDriver, jdbcUrl, jdbcUsername, AESUtil.aesDecode(jdbcPassword));
-            List<Map> result = jdbcUtil.selectByParams(sql, null);
-            for (Map map : result) {
-                System.out.println(map.get("TABLE_NAME"));
-                table = new HashMap<>(2);
-                table.put("table_name", map.get("TABLE_NAME"));
-                table.put("model_name", lineToHump(ObjectUtils.toString(map.get("TABLE_NAME"))));
-                tables.add(table);
-            }
-            jdbcUtil.release();
-
-            String targetProjectSqlMap = basePath + module;
-            context.put("tables", tables);
-            context.put("generator_javaModelGenerator_targetPackage", packageName + ".model");
-            context.put("generator_sqlMapGenerator_targetPackage", "mapper");
-            context.put("generator_javaClientGenerator_targetPackage", packageName + ".mapper");
-            context.put("targetProject", targetProject);
-            context.put("targetProject_sqlMap", targetProject + "/src/main/resources");
-            context.put("generator_jdbc_password", AESUtil.aesDecode(jdbcPassword));
-            context.put("last_insert_id_tables", lastInsertIdTables);
-            VelocityUtil.generate(generatorConfigVm, generatorConfigXml, context);
-            // 删除旧代码
-            deleteDir(new File(targetProject + "/src/main/java/" + packageName
-                    .replaceAll("\\.", "/") + "/model"));
-
-            deleteDir(new File(targetProject + "/src/main/java/" + packageName
-                    .replaceAll("\\.", "/") + "/mapper"));
-
-            deleteDir(new File(targetProjectSqlMap + "/src/main/java/" + packageName
-                    .replaceAll("\\.", "/") + "/mapper"));
-
+            DefaultShellCallback callback = new DefaultShellCallback(true);
+            warnings = new ArrayList<>();
+            generator = new MyBatisGenerator(config, callback, warnings);
+            generator.generate(null);
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("========== 结束生成generatorConfig.xml文件 ==========");
-
-        System.out.println("========== 开始运行MybatisGenerator ==========");
-        List<String> warnings = new ArrayList<>();
-        File configFile = new File(generatorConfigXml);
-        ConfigurationParser cp = new ConfigurationParser(warnings);
-        Configuration config = cp.parseConfiguration(configFile);
-        DefaultShellCallback callback = new DefaultShellCallback(true);
-        MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, callback, warnings);
-        myBatisGenerator.generate(null);
-        for (String warning : warnings) {
-            System.out.println(warning);
-        }
-        System.out.println("========== 结束运行MybatisGenerator ==========");
-
-        System.out.println("========== 开始生成Service ==========");
-        String ctime = new SimpleDateFormat("yyyy/M/d").format(new Date());
-        String servicePath = basePath + module+ "/src/main/java/" + packageName
-                .replaceAll("\\.", "/") + "/service";
-
-        File serviceDir = new File(servicePath);
-        if(!serviceDir.exists()) {
-            serviceDir.mkdir();
+            throw new RuntimeException("生成Model和Mapper失败", e);
         }
 
-        String serviceImplPath = basePath + module+ "/src/main/java/" + packageName
-                .replaceAll("\\.", "/") + "/service/impl";
-
-        File serviceImplDir = new File(serviceImplPath);
-        if(!serviceImplDir.exists()) {
-            serviceImplDir.mkdir();
+        if (generator.getGeneratedJavaFiles().isEmpty() || generator.getGeneratedXmlFiles().isEmpty()) {
+            throw new RuntimeException("生成Model和Mapper失败：" + warnings);
         }
-
-        for (int i = 0; i < tables.size(); i++) {
-            String model = StringUtil.lineToHump(ObjectUtils.toString(tables.get(i).get("table_name")));
-            String service = servicePath + "/" + model + "Service.java";
-            String serviceMock = servicePath + "/" + model + "ServiceMock.java";
-            String serviceImpl = serviceImplPath + "/" + model + "ServiceImpl.java";
-            // 生成service
-            File serviceFile = new File(service);
-            serviceAndServiceMock(packageName, serviceVm, ctime, model, service, serviceFile);
-            // 生成serviceMock
-            File serviceMockFile = new File(serviceMock);
-            serviceAndServiceMock(packageName, serviceMockVm, ctime, model, serviceMock, serviceMockFile);
-            // 生成serviceImpl
-            File serviceImplFile = new File(serviceImpl);
-            if (!serviceImplFile.exists()) {
-                VelocityContext context = new VelocityContext();
-                context.put("package_name", packageName);
-                context.put("model", model);
-                context.put("mapper", StringUtil.toLowerCaseFirstOne(model));
-                context.put("ctime", ctime);
-                VelocityUtil.generate(serviceImplVm, serviceImpl, context);
-                System.out.println(serviceImpl);
-            }
+        if (StringUtils.isEmpty(modelName)) {
+            modelName = tableNameConvertUpperCamel(tableName);
         }
-        System.out.println("========== 结束生成Service ==========");
+        System.out.println(modelName + ".java 生成成功");
+        System.out.println(modelName + "Mapper.java 生成成功");
+        System.out.println(modelName + "Mapper.xml 生成成功");
+
+        String packagePathService = packageConvertPath(basePackage + ".service");
+        String packagePathServiceImpl = packageConvertPath(basePackage + ".service.impl");
+        String packagePathController = packageConvertPath(basePackage + ".controller");
+
+        genService(tableName, modelName, templateFilePath, basePackage, projectPath+"/"+moduleName, packagePathService, packagePathServiceImpl);
+
+        // genController(tableName, modelName, templateFilePath, basePackage, projectPath+"/"+moduleName, packagePathController);
     }
 
-    private static void serviceAndServiceMock(String packageName, String serviceVm, String ctime, String model, String service, File serviceFile) throws Exception {
-        if (!serviceFile.exists()) {
-            VelocityContext context = new VelocityContext();
-            context.put("package_name", packageName);
-            context.put("model", model);
-            context.put("ctime", ctime);
-            VelocityUtil.generate(serviceVm, service, context);
-            System.out.println(service);
+    private static void genService(String tableName, String modelName, String templateFilePath, String basePackage,
+                                   String projectPath, String packagePathService, String packagePathServiceImpl) {
+        try {
+            freemarker.template.Configuration cfg = getConfiguration(templateFilePath);
+
+            Map<String, Object> data = new HashMap<>(2);
+            data.put("date", DATE);
+            data.put("author", AUTHOR);
+            String modelNameUpperCamel = StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName;
+            data.put("modelNameUpperCamel", modelNameUpperCamel);
+            data.put("modelNameLowerCamel", tableNameConvertLowerCamel(tableName));
+            data.put("basePackage", basePackage);
+
+            File file = new File(projectPath + JAVA_PATH + packagePathService + modelNameUpperCamel + "Service.java");
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            cfg.getTemplate("service.ftl").process(data,
+                    new FileWriter(file));
+            System.out.println(modelNameUpperCamel + "Service.java 生成成功");
+
+            File file1 = new File(projectPath + JAVA_PATH + packagePathServiceImpl + modelNameUpperCamel + "ServiceImpl.java");
+            if (!file1.getParentFile().exists()) {
+                file1.getParentFile().mkdirs();
+            }
+            cfg.getTemplate("service-impl.ftl").process(data,
+                    new FileWriter(file1));
+            System.out.println(modelNameUpperCamel + "ServiceImpl.java 生成成功");
+        } catch (Exception e) {
+            throw new RuntimeException("生成Service失败", e);
         }
     }
 
-    /**
-     * 递归删除非空文件夹
-     * @param dir
-     */
-    public static void deleteDir(File dir) {
-        if (dir.isDirectory()) {
-            File[] files = dir.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                deleteDir(files[i]);
+    private static void genController(String tableName, String modelName, String templateFilePath, String basePackage, String projectPath, String packagePathController) {
+        try {
+            freemarker.template.Configuration cfg = getConfiguration(templateFilePath);
+
+            Map<String, Object> data = new HashMap<>(2);
+            data.put("date", DATE);
+            data.put("author", AUTHOR);
+            String modelNameUpperCamel = StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName;
+            data.put("baseRequestMapping", modelNameConvertMappingPath(modelNameUpperCamel));
+            data.put("modelNameUpperCamel", modelNameUpperCamel);
+            data.put("modelNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, modelNameUpperCamel));
+            data.put("basePackage", basePackage);
+
+            File file = new File(projectPath + JAVA_PATH + packagePathController + modelNameUpperCamel + "Controller.java");
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
             }
+            cfg.getTemplate("controller.ftl").process(data, new FileWriter(file));
+
+            System.out.println(modelNameUpperCamel + "Controller.java 生成成功");
+        } catch (Exception e) {
+            throw new RuntimeException("生成Controller失败", e);
         }
-        dir.delete();
+
+    }
+
+    private static freemarker.template.Configuration getConfiguration(String templateFilePath) throws IOException {
+        freemarker.template.Configuration cfg = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_23);
+        cfg.setDirectoryForTemplateLoading(new File(templateFilePath));
+        cfg.setDefaultEncoding("UTF-8");
+        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);
+        return cfg;
+    }
+
+    private static String tableNameConvertLowerCamel(String tableName) {
+        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, tableName.toLowerCase());
+    }
+
+    private static String tableNameConvertUpperCamel(String tableName) {
+        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, tableName.toLowerCase());
+
+    }
+
+    private static String tableNameConvertMappingPath(String tableName) {
+        tableName = tableName.toLowerCase();
+        return "/" + (tableName.contains("_") ? tableName.replaceAll("_", "/") : tableName);
+    }
+
+    private static String modelNameConvertMappingPath(String modelName) {
+        String tableName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, modelName);
+        return tableNameConvertMappingPath(tableName);
+    }
+
+    private static String packageConvertPath(String packageName) {
+        return String.format("/%s/", packageName.contains(".") ? packageName.replaceAll("\\.", "/") : packageName);
     }
 
 }
