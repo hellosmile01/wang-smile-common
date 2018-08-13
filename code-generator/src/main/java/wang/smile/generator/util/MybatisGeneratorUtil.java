@@ -40,7 +40,7 @@ public class MybatisGeneratorUtil {
      * @param tableName                 表名
      */
     public static void generator(String jdbcDiverClassName, String jdbcUrl, String jdbcUsername, String jdbcPassword, String projectPath,
-                                 String moduleName, String basePackage, String modelName, String tableName, String templateFilePath) {
+                                 String moduleName, String basePackage, String modelName, String tableName, String templateFilePath, boolean genService, boolean genController) {
 
         Context context = new Context(ModelType.FLAT);
         context.setId("Potato");
@@ -114,9 +114,12 @@ public class MybatisGeneratorUtil {
         String packagePathServiceImpl = packageConvertPath(basePackage + ".service.impl");
         String packagePathController = packageConvertPath(basePackage + ".controller");
 
-        genService(tableName, modelName, templateFilePath, basePackage, projectPath+"/"+moduleName, packagePathService, packagePathServiceImpl);
-
-        // genController(tableName, modelName, templateFilePath, basePackage, projectPath+"/"+moduleName, packagePathController);
+        if(genService) {
+            genService(tableName, modelName, templateFilePath, basePackage, projectPath+"/"+moduleName, packagePathService, packagePathServiceImpl);
+        }
+        if(genController) {
+            genController(tableName, modelName, templateFilePath, basePackage, projectPath+"/"+moduleName, packagePathController);
+        }
     }
 
     private static void genService(String tableName, String modelName, String templateFilePath, String basePackage,
