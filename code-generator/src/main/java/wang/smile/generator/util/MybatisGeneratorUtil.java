@@ -116,11 +116,13 @@ public class MybatisGeneratorUtil {
         String packagePathController = packageConvertPath(basePackage + ".controller");
         String packagePathDto = packageConvertPath(basePackage + ".dto");
         String packagePathVo = packageConvertPath(basePackage + ".vo");
+        String packagePathValid = packageConvertPath(basePackage + ".valid");
 
 
         if(genService) {
             genModelDto(tableName, modelName, templateFilePath,
-                    basePackage, projectPath+"/"+moduleName, packagePathDto, packagePathVo);
+                    basePackage, projectPath+"/"+moduleName,
+                    packagePathDto, packagePathVo, packagePathValid);
 
             genService(tableName, modelName, templateFilePath,
                     basePackage, projectPath+"/"+moduleName, packagePathService, packagePathServiceImpl);
@@ -151,6 +153,10 @@ public class MybatisGeneratorUtil {
             data.put("modelDtoNameUpperCamel", modelDtoNameUpperCamel);
             data.put("modelNameUpperCamel", modelNameUpperCamel);
             data.put("modelNameLowerCamel", tableNameConvertLowerCamel(tableName));
+
+            String modelValidNameUpperCamel = (StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName) + "Valid";
+            data.put("modelValidNameUpperCamel", modelValidNameUpperCamel);
+
             data.put("basePackage", basePackage);
 
             File file = new File(projectPath + JAVA_PATH + packagePathService + modelNameUpperCamel + "Service.java");
@@ -179,7 +185,8 @@ public class MybatisGeneratorUtil {
                                     String basePackage,
                                     String projectPath,
                                     String packagePathDto,
-                                    String packagePathVo) {
+                                    String packagePathVo,
+                                    String packagePathValid) {
         try {
 
             freemarker.template.Configuration cfg = getConfiguration(templateFilePath);
@@ -200,6 +207,9 @@ public class MybatisGeneratorUtil {
             cfg.getTemplate("model-dto.ftl").process(data, new FileWriter(file));
 
 
+            /**
+             *
+             */
             String modelVoNameUpperCamel = (StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName) + "Vo";
 
             data.put("modelVoNameUpperCamel", modelVoNameUpperCamel);
@@ -209,6 +219,18 @@ public class MybatisGeneratorUtil {
                 fileVo.getParentFile().mkdirs();
             }
             cfg.getTemplate("model-vo.ftl").process(data, new FileWriter(fileVo));
+
+            /**
+             *
+             */
+            String modelValidNameUpperCamel = (StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName) + "Valid";
+            data.put("modelValidNameUpperCamel", modelValidNameUpperCamel);
+
+            File fileValid = new File(projectPath + JAVA_PATH + packagePathValid + modelNameUpperCamel + "Valid.java");
+            if (!fileValid.getParentFile().exists()) {
+                fileValid.getParentFile().mkdirs();
+            }
+            cfg.getTemplate("model-valid.ftl").process(data, new FileWriter(fileValid));
 
             System.out.println(modelDtoNameUpperCamel + "Dto.java 和 "+modelDtoNameUpperCamel + "Vo.java 生成成功");
         } catch (Exception e) {
@@ -230,6 +252,9 @@ public class MybatisGeneratorUtil {
             String modelVoNameUpperCamel = (StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName) + "Vo";
             data.put("modelVoNameUpperCamel", modelVoNameUpperCamel);
             data.put("modelDtoNameUpperCamel", modelDtoNameUpperCamel);
+
+            String modelValidNameUpperCamel = (StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName) + "Valid";
+            data.put("modelValidNameUpperCamel", modelValidNameUpperCamel);
 
             data.put("baseRequestMapping", modelNameConvertMappingPath(modelNameUpperCamel));
             data.put("modelNameUpperCamel", modelNameUpperCamel);
