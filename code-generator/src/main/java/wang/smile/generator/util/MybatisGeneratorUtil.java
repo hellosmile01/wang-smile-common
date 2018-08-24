@@ -126,7 +126,8 @@ public class MybatisGeneratorUtil {
                     basePackage, projectPath+"/"+moduleName, packagePathService, packagePathServiceImpl);
         }
         if(genController) {
-           // genController(tableName, modelName, templateFilePath, basePackage, projectPath+"/"+moduleName, packagePathController);
+            genController(tableName, modelName, templateFilePath,
+                    basePackage, projectPath+"/"+moduleName, packagePathController);
         }
     }
 
@@ -147,8 +148,8 @@ public class MybatisGeneratorUtil {
             String modelDtoNameUpperCamel = (StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName) + "Dto";
             String modelVoNameUpperCamel = (StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName) + "Vo";
             data.put("modelVoNameUpperCamel", modelVoNameUpperCamel);
-            data.put("modelNameUpperCamel", modelNameUpperCamel);
             data.put("modelDtoNameUpperCamel", modelDtoNameUpperCamel);
+            data.put("modelNameUpperCamel", modelNameUpperCamel);
             data.put("modelNameLowerCamel", tableNameConvertLowerCamel(tableName));
             data.put("basePackage", basePackage);
 
@@ -224,6 +225,12 @@ public class MybatisGeneratorUtil {
             data.put("date", DATE);
             data.put("author", AUTHOR);
             String modelNameUpperCamel = StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName;
+
+            String modelDtoNameUpperCamel = (StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName) + "Dto";
+            String modelVoNameUpperCamel = (StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName) + "Vo";
+            data.put("modelVoNameUpperCamel", modelVoNameUpperCamel);
+            data.put("modelDtoNameUpperCamel", modelDtoNameUpperCamel);
+
             data.put("baseRequestMapping", modelNameConvertMappingPath(modelNameUpperCamel));
             data.put("modelNameUpperCamel", modelNameUpperCamel);
             data.put("modelNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, modelNameUpperCamel));
