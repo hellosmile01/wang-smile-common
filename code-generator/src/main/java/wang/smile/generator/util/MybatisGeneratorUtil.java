@@ -113,17 +113,28 @@ public class MybatisGeneratorUtil {
         String packagePathService = packageConvertPath(basePackage + ".service");
         String packagePathServiceImpl = packageConvertPath(basePackage + ".service.impl");
         String packagePathController = packageConvertPath(basePackage + ".controller");
+        String packagePathDto = packageConvertPath(basePackage + ".dto");
+        String packagePathVo = packageConvertPath(basePackage + ".vo");
+
+        genModelDto(tableName, modelName, templateFilePath,
+                basePackage, projectPath+"/"+moduleName, packagePathDto, packagePathVo);
 
         if(genService) {
-            genService(tableName, modelName, templateFilePath, basePackage, projectPath+"/"+moduleName, packagePathService, packagePathServiceImpl);
+            genService(tableName, modelName, templateFilePath,
+                    basePackage, projectPath+"/"+moduleName, packagePathService, packagePathServiceImpl);
         }
         if(genController) {
-            genController(tableName, modelName, templateFilePath, basePackage, projectPath+"/"+moduleName, packagePathController);
+           // genController(tableName, modelName, templateFilePath, basePackage, projectPath+"/"+moduleName, packagePathController);
         }
     }
 
-    private static void genService(String tableName, String modelName, String templateFilePath, String basePackage,
-                                   String projectPath, String packagePathService, String packagePathServiceImpl) {
+    private static void genService(String tableName,
+                                   String modelName,
+                                   String templateFilePath,
+                                   String basePackage,
+                                   String projectPath,
+                                   String packagePathService,
+                                   String packagePathServiceImpl) {
         try {
             freemarker.template.Configuration cfg = getConfiguration(templateFilePath);
 
@@ -131,7 +142,11 @@ public class MybatisGeneratorUtil {
             data.put("date", DATE);
             data.put("author", AUTHOR);
             String modelNameUpperCamel = StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName;
+            String modelDtoNameUpperCamel = (StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName) + "Dto";
+            String modelVoNameUpperCamel = (StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName) + "Vo";
+            data.put("modelVoNameUpperCamel", modelVoNameUpperCamel);
             data.put("modelNameUpperCamel", modelNameUpperCamel);
+            data.put("modelDtoNameUpperCamel", modelDtoNameUpperCamel);
             data.put("modelNameLowerCamel", tableNameConvertLowerCamel(tableName));
             data.put("basePackage", basePackage);
 
@@ -153,6 +168,50 @@ public class MybatisGeneratorUtil {
         } catch (Exception e) {
             throw new RuntimeException("生成Service失败", e);
         }
+    }
+
+    private static void genModelDto(String tableName,
+                                    String modelName,
+                                    String templateFilePath,
+                                    String basePackage,
+                                    String projectPath,
+                                    String packagePathDto,
+                                    String packagePathVo) {
+        try {
+
+            freemarker.template.Configuration cfg = getConfiguration(templateFilePath);
+
+            Map<String, Object> data = new HashMap<>(2);
+            data.put("date", DATE);
+            data.put("author", AUTHOR);
+            String modelNameUpperCamel = StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName;
+            String modelDtoNameUpperCamel = (StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName) + "Dto";
+            data.put("modelNameUpperCamel", modelNameUpperCamel);
+            data.put("modelDtoNameUpperCamel", modelDtoNameUpperCamel);
+            data.put("basePackage", basePackage);
+
+            File file = new File(projectPath + JAVA_PATH + packagePathDto + modelNameUpperCamel + "Dto.java");
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            cfg.getTemplate("model-dto.ftl").process(data, new FileWriter(file));
+
+
+            String modelVoNameUpperCamel = (StringUtils.isEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName) + "Vo";
+
+            data.put("modelVoNameUpperCamel", modelVoNameUpperCamel);
+
+            File fileVo = new File(projectPath + JAVA_PATH + packagePathVo + modelNameUpperCamel + "Vo.java");
+            if (!fileVo.getParentFile().exists()) {
+                fileVo.getParentFile().mkdirs();
+            }
+            cfg.getTemplate("model-vo.ftl").process(data, new FileWriter(fileVo));
+
+            System.out.println(modelDtoNameUpperCamel + "Dto.java 和 "+modelDtoNameUpperCamel + "Vo.java 生成成功");
+        } catch (Exception e) {
+            throw new RuntimeException("生成DTO和Vo失败", e);
+        }
+
     }
 
     private static void genController(String tableName, String modelName, String templateFilePath, String basePackage, String projectPath, String packagePathController) {
