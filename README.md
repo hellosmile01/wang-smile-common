@@ -135,7 +135,7 @@ public class MerchantController {
 
 ```
 
-##### `service`示例代码
+##### 6, `service`示例代码
 ```java
 package com.coder.sample.service.impl;
 
