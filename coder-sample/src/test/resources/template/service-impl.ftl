@@ -29,13 +29,25 @@ public class ${modelNameUpperCamel}ServiceImpl extends BaseService<${modelNameUp
     private ${modelNameUpperCamel}Mapper ${modelNameLowerCamel}Mapper;
 
     @Override
-    public void insertDto(${modelDtoNameUpperCamel} dto) {
-        ${modelNameUpperCamel} model = new ${modelDtoNameUpperCamel}().transfer(dto);
+    public void insertByDto(${modelDtoNameUpperCamel} dto) {
+        ${modelNameUpperCamel} model = ${modelDtoNameUpperCamel}.transfer(dto);
 
         model.setBeenDeleted(false);
         model.setInsertTime(new Date());
 
         ${modelNameLowerCamel}Mapper.insert(model);
+    }
+
+    @Override
+    public void updateByDto(${modelDtoNameUpperCamel} dto) throws Exception {
+        ${modelNameUpperCamel} model = ${modelDtoNameUpperCamel}.transfer(dto);
+
+        model.setUpdateTime(new Date());
+        if(null == model.getId()) {
+            throw new Exception("id不能为空");
+        }
+
+        ${modelNameLowerCamel}Mapper.updateByPrimaryKeySelective(model);
     }
 
     @Override

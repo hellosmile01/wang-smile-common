@@ -17,7 +17,7 @@ public interface MerchantService extends Service<Merchant> {
      * 插入数据
      * @param dto
      */
-    void insertDto(MerchantDto dto);
+    void insertByDto(MerchantDto dto);
 
     /**
      * 非物理删除

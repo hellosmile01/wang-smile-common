@@ -29,7 +29,7 @@ public class MerchantServiceImpl extends BaseService<Merchant> implements Mercha
     private MerchantMapper merchantMapper;
 
     @Override
-    public void insertDto(MerchantDto dto) {
+    public void insertByDto(MerchantDto dto) {
         Merchant model = new MerchantDto().transfer(dto);
 
         model.setBeenDeleted(false);

@@ -33,7 +33,7 @@ public class MerchantController {
     @ApiOperation(value = "新增", httpMethod = "POST", response = MerchantController.class, notes = "新增")
     public BaseResult createModel(MerchantDto dto) {
         try {
-            services.insertDto(dto);
+            services.insertByDto(dto);
         } catch (Exception e) {
             e.printStackTrace();
             return new BaseResult(BaseConstants.FAILED_CODE, BaseConstants.FAILED_MSG, "新增数据异常");

@@ -17,7 +17,13 @@ public interface ${modelNameUpperCamel}Service extends Service<${modelNameUpperC
      * 插入数据
      * @param dto
      */
-    void insertDto(${modelDtoNameUpperCamel} dto);
+    void insertByDto(${modelDtoNameUpperCamel} dto);
+
+    /**
+     * 修改数据
+     * @param dto
+     */
+    void updateByDto(StoreDto dto)  throws Exception;
 
     /**
      * 非物理删除
