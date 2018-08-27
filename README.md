@@ -29,3 +29,7 @@
 ##### 3, 代码摸板以及相关数据库配置都放在`test`目录中进行，具体代码及配置参考`corder-sample`项目中的使用方法
 
 ![案例](https://github.com/smilewangsy/wang-smile-common/blob/master/20180805201915.png)
+
+##### 4, 生成相应的`controller`, `service`, `dao`, `mapper`, `vo`, `valid`代码，并生成单表的`曾,删,改,查`代码
+
+![案例](https://github.com/smilewangsy/wang-smile-common/blob/master/20180827100614.png)
