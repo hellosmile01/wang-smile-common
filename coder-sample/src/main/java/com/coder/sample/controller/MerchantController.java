@@ -87,7 +87,8 @@ public class MerchantController {
         }
         List<Merchant> list = services.selectByConditions(valid);
 
+        List<MerchantVo> voList = new MerchantVo().transModelListToVoList(list);
 
-        return new BaseResult(BaseConstants.SUCCESS_CODE, BaseConstants.SUCCESS_MSG, list);
+        return new BaseResult(BaseConstants.SUCCESS_CODE, BaseConstants.SUCCESS_MSG, voList);
     }
 }

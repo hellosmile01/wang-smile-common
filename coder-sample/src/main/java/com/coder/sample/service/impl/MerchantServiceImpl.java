@@ -42,12 +42,6 @@ public class MerchantServiceImpl extends BaseService<Merchant> implements Mercha
     @Override
     public Merchant selectById(Object id) {
         Merchant model = merchantMapper.selectByPrimaryKey(id);
-        /**
-         * 判断model的beenDelete是否为true, 如果为true表示数据已删除
-         */
-        if(model!=null && model.getBeenDeleted()) {
-            return null;
-        }
         return model;
     }
 
@@ -56,10 +50,6 @@ public class MerchantServiceImpl extends BaseService<Merchant> implements Mercha
 
         Condition condition = new Condition(Merchant.class);
         Example.Criteria criteria = condition.createCriteria();
-        /**
-         * 查询未被删除的数据
-         */
-        criteria.andEqualTo("beenDeleted", false);
 
         return merchantMapper.selectByCondition(criteria);
     }
@@ -67,9 +57,6 @@ public class MerchantServiceImpl extends BaseService<Merchant> implements Mercha
     @Override
     public void deleteByUpdate(Object id) {
         Merchant model = merchantMapper.selectByPrimaryKey(id);
-        /**
-         * 非物理删除(设置beenDeleted为true表示数据被删除)
-         */
         model.setBeenDeleted(true);
         model.setDeleteTime(new Date());
         merchantMapper.updateByPrimaryKeySelective(model);
