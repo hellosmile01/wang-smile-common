@@ -1,18 +1,14 @@
 package com.coder.sample.service.impl;
 
+import com.coder.sample.dto.MerchantDto;
 import com.coder.sample.mapper.MerchantMapper;
 import com.coder.sample.model.Merchant;
 import com.coder.sample.service.MerchantService;
-import com.coder.sample.dto.MerchantDto;
 import com.coder.sample.valid.MerchantValid;
-
-import wang.smile.common.base.BaseService;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import tk.mybatis.mapper.entity.Condition;
 import tk.mybatis.mapper.entity.Example;
+import wang.smile.common.base.BaseService;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -48,10 +44,13 @@ public class MerchantServiceImpl extends BaseService<Merchant> implements Mercha
     @Override
     public List<Merchant> selectByConditions(MerchantValid valid) {
 
-        Condition condition = new Condition(Merchant.class);
-        Example.Criteria criteria = condition.createCriteria();
-
-        return merchantMapper.selectByCondition(criteria);
+        Example example = new Example(Merchant.class);
+        Example.Criteria criteria = example.createCriteria();
+        /**
+         * 查询未被删除的数据
+         */
+        criteria.andEqualTo("beenDeleted", false);
+        return merchantMapper.selectByCondition(example);
     }
 
     @Override

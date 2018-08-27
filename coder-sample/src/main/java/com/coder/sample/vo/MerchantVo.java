@@ -4,26 +4,31 @@ import org.springframework.beans.BeanUtils;
 import com.coder.sample.model.Merchant;
 
 import java.util.List;
+import java.io.Serializable;
 import java.util.stream.Collectors;
+
+import lombok.Data;
 
 /**
  * @author wangsy
  * @date 2018/08/27.
  */
-public class MerchantVo {
+@Data
+public class MerchantVo implements Serializable {
 
-    public MerchantVo transModelToVo(Merchant model) {
-        BeanUtils.copyProperties(model, this);
-        return this;
+    public static MerchantVo transModelToVo(Merchant model) {
+        MerchantVo vo = new MerchantVo();
+        BeanUtils.copyProperties(model, vo);
+        return vo;
     }
 
     /**
      * 将ModelList转换为ModelVoList
-     * @param memberList
+     * @param modelList
      * @return
      */
-    public List<MerchantVo> transModelListToVoList(List<Merchant> memberList) {
-        List<MerchantVo> collect = memberList.stream().map(e -> this.transModelToVo(e)).collect(Collectors.toList());
-        return collect;
+    public static List<MerchantVo> transModelListToVoList(List<Merchant> modelList) {
+        List<MerchantVo> voList = modelList.stream().map(e -> transModelToVo(e)).collect(Collectors.toList());
+        return voList;
     }
 }
