@@ -32,7 +32,7 @@
 
 ![案例](https://github.com/smilewangsy/wang-smile-common/blob/master/20180805201915.png)
 
-##### 4, 生成相应的`controller`, `service`, `dao`, `mapper`, `vo`, `valid`代码，并生成单表的`曾,删,改,查`代码
+##### 4, 生成相应的`controller`, `service`, `mapper`, `dto`, `vo`, `valid`代码，并生成单表的`曾,删,改,查`代码
 
 ![案例](https://github.com/smilewangsy/wang-smile-common/blob/master/20180827100614.png)
 
