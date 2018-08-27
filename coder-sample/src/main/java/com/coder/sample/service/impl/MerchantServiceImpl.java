@@ -1,14 +1,17 @@
 package com.coder.sample.service.impl;
 
-import com.coder.sample.dto.MerchantDto;
 import com.coder.sample.mapper.MerchantMapper;
 import com.coder.sample.model.Merchant;
 import com.coder.sample.service.MerchantService;
+import com.coder.sample.dto.MerchantDto;
 import com.coder.sample.valid.MerchantValid;
+
+import wang.smile.common.base.BaseService;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import tk.mybatis.mapper.entity.Example;
-import wang.smile.common.base.BaseService;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -38,6 +41,10 @@ public class MerchantServiceImpl extends BaseService<Merchant> implements Mercha
     @Override
     public Merchant selectById(Object id) {
         Merchant model = merchantMapper.selectByPrimaryKey(id);
+
+        if (model!=null && model.getBeenDeleted()) {
+            return null;
+        }
         return model;
     }
 

@@ -232,7 +232,7 @@ public class MybatisGeneratorUtil {
             }
             cfg.getTemplate("model-valid.ftl").process(data, new FileWriter(fileValid));
 
-            System.out.println(modelDtoNameUpperCamel + "Dto.java 和 "+modelVoNameUpperCamel + "Vo.java 生成成功"+modelValidNameUpperCamel + "Valid.java 生成成功");
+            System.out.println(modelDtoNameUpperCamel + "Dto.java 生成成功\n"+modelVoNameUpperCamel + "Vo.java 生成成功\n"+modelValidNameUpperCamel + "Valid.java 生成成功");
         } catch (Exception e) {
             throw new RuntimeException("生成DTO、Vo和Valid失败", e);
         }
