@@ -7,8 +7,9 @@ public class Merchant {
     /**
      * 主键id
      */
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     /**
      * 商户名称
@@ -16,22 +17,27 @@ public class Merchant {
     private String name;
 
     /**
-     * 联系人姓名
+     * 联系电话
      */
-    @Column(name = "contact_name")
-    private String contactName;
+    private String mobile;
 
     /**
-     * 联系人电话
+     * 负责人
      */
-    @Column(name = "contact_mobile")
-    private String contactMobile;
+    @Column(name = "principal_name")
+    private String principalName;
+
+    /**
+     * 负责人电话
+     */
+    @Column(name = "principal_mobile")
+    private String principalMobile;
 
     /**
      * 营业时间(开始时间）
      */
     @Column(name = "start_hours")
-    private Date startHours;
+    private String startHours;
 
     /**
      * 营业时间(结束时间)
@@ -58,6 +64,67 @@ public class Merchant {
      * 详细地址
      */
     private String address;
+
+    /**
+     * 审核状态（0：未审核，1：通过；2：不通过）
+     */
+    private Integer state;
+
+    /**
+     * 是否有效
+     */
+    @Column(name = "is_valid")
+    private Boolean isValid;
+
+    /**
+     * 经度
+     */
+    private Double longitude;
+
+    /**
+     * 纬度
+     */
+    private Double latitude;
+
+    /**
+     * 描述
+     */
+    private String description;
+
+    /**
+     * 登陆账号
+     */
+    @Column(name = "login_account")
+    private String loginAccount;
+
+    /**
+     * 密码
+     */
+    private String password;
+
+    /**
+     * 数据入库时间
+     */
+    @Column(name = "insert_time")
+    private Date insertTime;
+
+    /**
+     * 数据最后一次更新时间
+     */
+    @Column(name = "update_time")
+    private Date updateTime;
+
+    /**
+     * 删除时间
+     */
+    @Column(name = "delete_time")
+    private Date deleteTime;
+
+    /**
+     * 是否已删除
+     */
+    @Column(name = "been_deleted")
+    private Boolean beenDeleted;
 
     /**
      * 门店Logo（图片url，单张）
@@ -101,31 +168,11 @@ public class Merchant {
     private String industryLicense;
 
     /**
-     * 审核状态（0：未审核，1：通过；2：不通过）
-     */
-    private Integer state;
-
-    /**
-     * 经度
-     */
-    private Double longitude;
-
-    /**
-     * 纬度
-     */
-    private Double latitude;
-
-    /**
-     * 密码
-     */
-    private String password;
-
-    /**
      * 获取主键id
      *
      * @return id - 主键id
      */
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
@@ -134,7 +181,7 @@ public class Merchant {
      *
      * @param id 主键id
      */
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -157,39 +204,57 @@ public class Merchant {
     }
 
     /**
-     * 获取联系人姓名
+     * 获取联系电话
      *
-     * @return contact_name - 联系人姓名
+     * @return mobile - 联系电话
      */
-    public String getContactName() {
-        return contactName;
+    public String getMobile() {
+        return mobile;
     }
 
     /**
-     * 设置联系人姓名
+     * 设置联系电话
      *
-     * @param contactName 联系人姓名
+     * @param mobile 联系电话
      */
-    public void setContactName(String contactName) {
-        this.contactName = contactName;
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
     /**
-     * 获取联系人电话
+     * 获取负责人
      *
-     * @return contact_mobile - 联系人电话
+     * @return principal_name - 负责人
      */
-    public String getContactMobile() {
-        return contactMobile;
+    public String getPrincipalName() {
+        return principalName;
     }
 
     /**
-     * 设置联系人电话
+     * 设置负责人
      *
-     * @param contactMobile 联系人电话
+     * @param principalName 负责人
      */
-    public void setContactMobile(String contactMobile) {
-        this.contactMobile = contactMobile;
+    public void setPrincipalName(String principalName) {
+        this.principalName = principalName;
+    }
+
+    /**
+     * 获取负责人电话
+     *
+     * @return principal_mobile - 负责人电话
+     */
+    public String getPrincipalMobile() {
+        return principalMobile;
+    }
+
+    /**
+     * 设置负责人电话
+     *
+     * @param principalMobile 负责人电话
+     */
+    public void setPrincipalMobile(String principalMobile) {
+        this.principalMobile = principalMobile;
     }
 
     /**
@@ -197,7 +262,7 @@ public class Merchant {
      *
      * @return start_hours - 营业时间(开始时间）
      */
-    public Date getStartHours() {
+    public String getStartHours() {
         return startHours;
     }
 
@@ -206,7 +271,7 @@ public class Merchant {
      *
      * @param startHours 营业时间(开始时间）
      */
-    public void setStartHours(Date startHours) {
+    public void setStartHours(String startHours) {
         this.startHours = startHours;
     }
 
@@ -298,6 +363,204 @@ public class Merchant {
      */
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    /**
+     * 获取审核状态（0：未审核，1：通过；2：不通过）
+     *
+     * @return state - 审核状态（0：未审核，1：通过；2：不通过）
+     */
+    public Integer getState() {
+        return state;
+    }
+
+    /**
+     * 设置审核状态（0：未审核，1：通过；2：不通过）
+     *
+     * @param state 审核状态（0：未审核，1：通过；2：不通过）
+     */
+    public void setState(Integer state) {
+        this.state = state;
+    }
+
+    /**
+     * 获取是否有效
+     *
+     * @return is_valid - 是否有效
+     */
+    public Boolean getIsValid() {
+        return isValid;
+    }
+
+    /**
+     * 设置是否有效
+     *
+     * @param isValid 是否有效
+     */
+    public void setIsValid(Boolean isValid) {
+        this.isValid = isValid;
+    }
+
+    /**
+     * 获取经度
+     *
+     * @return longitude - 经度
+     */
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    /**
+     * 设置经度
+     *
+     * @param longitude 经度
+     */
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    /**
+     * 获取纬度
+     *
+     * @return latitude - 纬度
+     */
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    /**
+     * 设置纬度
+     *
+     * @param latitude 纬度
+     */
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    /**
+     * 获取描述
+     *
+     * @return description - 描述
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * 设置描述
+     *
+     * @param description 描述
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * 获取登陆账号
+     *
+     * @return login_account - 登陆账号
+     */
+    public String getLoginAccount() {
+        return loginAccount;
+    }
+
+    /**
+     * 设置登陆账号
+     *
+     * @param loginAccount 登陆账号
+     */
+    public void setLoginAccount(String loginAccount) {
+        this.loginAccount = loginAccount;
+    }
+
+    /**
+     * 获取密码
+     *
+     * @return password - 密码
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * 设置密码
+     *
+     * @param password 密码
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * 获取数据入库时间
+     *
+     * @return insert_time - 数据入库时间
+     */
+    public Date getInsertTime() {
+        return insertTime;
+    }
+
+    /**
+     * 设置数据入库时间
+     *
+     * @param insertTime 数据入库时间
+     */
+    public void setInsertTime(Date insertTime) {
+        this.insertTime = insertTime;
+    }
+
+    /**
+     * 获取数据最后一次更新时间
+     *
+     * @return update_time - 数据最后一次更新时间
+     */
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    /**
+     * 设置数据最后一次更新时间
+     *
+     * @param updateTime 数据最后一次更新时间
+     */
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    /**
+     * 获取删除时间
+     *
+     * @return delete_time - 删除时间
+     */
+    public Date getDeleteTime() {
+        return deleteTime;
+    }
+
+    /**
+     * 设置删除时间
+     *
+     * @param deleteTime 删除时间
+     */
+    public void setDeleteTime(Date deleteTime) {
+        this.deleteTime = deleteTime;
+    }
+
+    /**
+     * 获取是否已删除
+     *
+     * @return been_deleted - 是否已删除
+     */
+    public Boolean getBeenDeleted() {
+        return beenDeleted;
+    }
+
+    /**
+     * 设置是否已删除
+     *
+     * @param beenDeleted 是否已删除
+     */
+    public void setBeenDeleted(Boolean beenDeleted) {
+        this.beenDeleted = beenDeleted;
     }
 
     /**
@@ -424,77 +687,5 @@ public class Merchant {
      */
     public void setIndustryLicense(String industryLicense) {
         this.industryLicense = industryLicense;
-    }
-
-    /**
-     * 获取审核状态（0：未审核，1：通过；2：不通过）
-     *
-     * @return state - 审核状态（0：未审核，1：通过；2：不通过）
-     */
-    public Integer getState() {
-        return state;
-    }
-
-    /**
-     * 设置审核状态（0：未审核，1：通过；2：不通过）
-     *
-     * @param state 审核状态（0：未审核，1：通过；2：不通过）
-     */
-    public void setState(Integer state) {
-        this.state = state;
-    }
-
-    /**
-     * 获取经度
-     *
-     * @return longitude - 经度
-     */
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    /**
-     * 设置经度
-     *
-     * @param longitude 经度
-     */
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    /**
-     * 获取纬度
-     *
-     * @return latitude - 纬度
-     */
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    /**
-     * 设置纬度
-     *
-     * @param latitude 纬度
-     */
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    /**
-     * 获取密码
-     *
-     * @return password - 密码
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * 设置密码
-     *
-     * @param password 密码
-     */
-    public void setPassword(String password) {
-        this.password = password;
     }
 }
