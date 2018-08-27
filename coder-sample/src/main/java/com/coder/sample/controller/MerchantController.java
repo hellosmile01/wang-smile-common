@@ -41,6 +41,18 @@ public class MerchantController {
         return new BaseResult(BaseConstants.SUCCESS_CODE, BaseConstants.SUCCESS_MSG, "SUCCESS");
     }
 
+    @PutMapping
+    @ApiOperation(value = "修改", httpMethod = "PUT", response = MerchantController.class, notes = "修改")
+    public BaseResult updateModel(MerchantDto dto) {
+        try {
+            services.updateByDto(dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new BaseResult(BaseConstants.FAILED_CODE, BaseConstants.FAILED_MSG, "修改数据异常");
+        }
+        return new BaseResult(BaseConstants.SUCCESS_CODE, BaseConstants.SUCCESS_MSG, "SUCCESS");
+    }
+
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除", httpMethod = "DELETE", response = MerchantController.class, notes = "删除")
     public BaseResult deleteById(@PathVariable Long id) {

@@ -20,6 +20,12 @@ public interface MerchantService extends Service<Merchant> {
     void insertByDto(MerchantDto dto);
 
     /**
+     * 修改数据
+     * @param dto
+     */
+    void updateByDto(MerchantDto dto)  throws Exception;
+
+    /**
      * 非物理删除
      * @param id
      */

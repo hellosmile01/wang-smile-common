@@ -30,12 +30,24 @@ public class MerchantServiceImpl extends BaseService<Merchant> implements Mercha
 
     @Override
     public void insertByDto(MerchantDto dto) {
-        Merchant model = new MerchantDto().transfer(dto);
+        Merchant model = MerchantDto.transfer(dto);
 
         model.setBeenDeleted(false);
         model.setInsertTime(new Date());
 
         merchantMapper.insert(model);
+    }
+
+    @Override
+    public void updateByDto(MerchantDto dto) throws Exception {
+        Merchant model = MerchantDto.transfer(dto);
+
+        model.setUpdateTime(new Date());
+        if(null == model.getId()) {
+            throw new Exception("id不能为空");
+        }
+
+        merchantMapper.updateByPrimaryKeySelective(model);
     }
 
     @Override

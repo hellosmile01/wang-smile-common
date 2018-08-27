@@ -23,7 +23,7 @@ public interface ${modelNameUpperCamel}Service extends Service<${modelNameUpperC
      * 修改数据
      * @param dto
      */
-    void updateByDto(StoreDto dto)  throws Exception;
+    void updateByDto(${modelDtoNameUpperCamel} dto)  throws Exception;
 
     /**
      * 非物理删除

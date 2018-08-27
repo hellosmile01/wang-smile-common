@@ -14,7 +14,7 @@ import lombok.Data;
 @Data
 public class MerchantDto implements Serializable {
 
-    public Merchant transfer(MerchantDto dto) {
+    public static Merchant transfer(MerchantDto dto) {
 
         Merchant model = new Merchant();
         BeanUtils.copyProperties(dto, model);
