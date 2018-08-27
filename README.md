@@ -11,8 +11,8 @@
 ##### 1, 将`wang-smile-common`下载到本地，通过`Maven`进行`install`操作(将项目打包并将jar包安装到本地仓库)
 ##### 2, 项目的`pom.xml`文件中引入相关`jar`包, 添加以下依赖：
 ```xml
-<!--工具包-->
 <dependencise>
+    <!--工具及公共代码-->
     <dependency>
         <artifactId>smile-common</artifactId>
         <groupId>wang.smile.common</groupId>
