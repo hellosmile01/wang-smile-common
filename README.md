@@ -12,18 +12,20 @@
 ##### 2, 项目的`pom.xml`文件中引入相关`jar`包, 添加以下依赖：
 ```xml
 <!--工具包-->
-<dependency>
-    <artifactId>smile-common</artifactId>
-    <groupId>wang.smile.common</groupId>
-    <version>0.0.1-SNAPSHOT</version>
-</dependency>
-<!--代码生成包-->
-<dependency>
-    <artifactId>code-generator</artifactId>
-    <groupId>wang.smile.common</groupId>
-    <version>0.0.1-SNAPSHOT</version>
-    <scope>test</scope>
-</dependency>
+<dependencise>
+    <dependency>
+        <artifactId>smile-common</artifactId>
+        <groupId>wang.smile.common</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <!--代码生成包-->
+    <dependency>
+        <artifactId>code-generator</artifactId>
+        <groupId>wang.smile.common</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+        <scope>test</scope>
+    </dependency>
+</dependencise>
 ```
 
 ##### 3, 代码摸板以及相关数据库配置都放在`test`目录中进行，具体代码及配置参考`corder-sample`项目中的使用方法
